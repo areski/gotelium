@@ -22,6 +22,7 @@ import (
 func main() {
 
 	handler := rest.ResourceHandler{
+		EnableStatusService:      true,
 		EnableRelaxedContentType: true,
 		PreRoutingMiddlewares: []rest.Middleware{
 			&rest.AuthBasicMiddleware{
@@ -40,6 +41,11 @@ func main() {
 		&rest.Route{"POST", "/countries", PostCountry},
 		&rest.Route{"GET", "/countries/:code", GetCountry},
 		&rest.Route{"DELETE", "/countries/:code", DeleteCountry},
+		&rest.Route{"GET", "/.status",
+			func(w rest.ResponseWriter, r *rest.Request) {
+				w.WriteJson(handler.GetStatus())
+			},
+		},
 	)
 	if err != nil {
 		log.Fatal(err)
